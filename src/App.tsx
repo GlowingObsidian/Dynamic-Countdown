@@ -1,26 +1,18 @@
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+
 import Countdown from "./components/Countdown";
+import Setup from "./components/Setup";
+import Home from "./components/Home";
 
 function App() {
-  const queryParams = new URLSearchParams(window.location.search);
-  const event = queryParams.get("event");
-  const day = Number(queryParams.get("day"));
-  const month = Number(queryParams.get("month"));
-  const year = Number(queryParams.get("year"));
-  const hour = Number(queryParams.get("hour"));
-  const minute = Number(queryParams.get("minute"));
-
   return (
-    <div className="">
-      <Countdown
-        event={event || "Event"}
-        day={day}
-        month={month}
-        year={year}
-        hour={hour}
-        minute={minute}
-        second={0}
-      />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />}></Route>
+        <Route path="/countdown" element={<Countdown />}></Route>
+        <Route path="/setup" element={<Setup />}></Route>
+      </Routes>
+    </Router>
   );
 }
 
