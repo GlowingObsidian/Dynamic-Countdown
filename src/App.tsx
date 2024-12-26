@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
-import Countdown from "./components/Countdown";
-import Setup from "./components/Setup";
-import Home from "./components/Home";
+import Countdown from "./pages/Countdown";
+import Setup from "./pages/Setup";
+import Home from "./pages/Home";
 
 function App() {
   return (
