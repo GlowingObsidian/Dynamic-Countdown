@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -10,19 +10,29 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CalendarIcon, ClockIcon, InfoIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  ClockIcon,
+  InfoIcon,
+  SmileIcon,
+  PaletteIcon,
+} from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { gradientOptions } from "@/services/palette";
 import { useNavigate } from "react-router-dom";
 
 type FormData = {
-  name: string;
-  description: string;
-  finish: string;
-  day: number;
-  month: number;
-  year: number;
-  hour: number | 0;
-  minute: number | 0;
-  second: number | 0;
+  n: string;
+  de: string;
+  f: string;
+  d: number;
+  mo: number;
+  y: number;
+  h: number;
+  m: number;
+  s: number;
+  e: string;
+  b: string;
 };
 
 export default function Setup() {
@@ -30,13 +40,19 @@ export default function Setup() {
     register,
     handleSubmit,
     formState: { errors },
+    control,
   } = useForm<FormData>();
 
   const navigator = useNavigate();
 
+  const serialize = (data: FormData) =>
+    `${data.n}|${data.de}|${data.f}|${data.d}|${data.mo}|${data.y}|${data.h}|${
+      data.m
+    }|${data.s}|${encodeURIComponent(data.e)}|${data.b}`;
+
   const onSubmit = (data: FormData) => {
-    const query = btoa(JSON.stringify(data));
-    const queryParams = new URLSearchParams([["params", query]]).toString();
+    const query = btoa(serialize(data));
+    const queryParams = new URLSearchParams([["p", query]]).toString();
     navigator(`/countdown?${queryParams}`);
   };
 
@@ -65,12 +81,12 @@ export default function Setup() {
                 id="name"
                 placeholder="Enter your event name"
                 className="w-full border-indigo-300 focus:border-indigo-500 focus:ring-indigo-500"
-                {...register("name", {
+                {...register("n", {
                   required: "Name is required",
                 })}
               />
-              {errors.name && (
-                <p className="text-sm text-red-500">{errors.name.message}</p>
+              {errors.n && (
+                <p className="text-sm text-red-500">{errors.n.message}</p>
               )}
             </div>
             <div className="space-y-2">
@@ -85,14 +101,12 @@ export default function Setup() {
                 id="desc"
                 placeholder="Enter a short description"
                 className="w-full border-indigo-300 focus:border-indigo-500 focus:ring-indigo-500"
-                {...register("description", {
+                {...register("de", {
                   required: "Description is required",
                 })}
               />
-              {errors.description && (
-                <p className="text-sm text-red-500">
-                  {errors.description.message}
-                </p>
+              {errors.de && (
+                <p className="text-sm text-red-500">{errors.de.message}</p>
               )}
             </div>
             <div className="space-y-2">
@@ -107,12 +121,12 @@ export default function Setup() {
                 id="finish"
                 placeholder="Enter a short note to show when event is over"
                 className="w-full border-indigo-300 focus:border-indigo-500 focus:ring-indigo-500"
-                {...register("finish", {
+                {...register("f", {
                   required: "Finishing note is required",
                 })}
               />
-              {errors.finish && (
-                <p className="text-sm text-red-500">{errors.finish.message}</p>
+              {errors.f && (
+                <p className="text-sm text-red-500">{errors.f.message}</p>
               )}
             </div>
             <div className="grid grid-cols-3 gap-4">
@@ -128,15 +142,15 @@ export default function Setup() {
                   placeholder="DD"
                   type="number"
                   className="w-full border-indigo-300 focus:border-indigo-500 focus:ring-indigo-500"
-                  {...register("day", {
+                  {...register("d", {
                     valueAsNumber: true,
                     required: "Required",
                     min: { value: 1, message: "Invalid" },
                     max: { value: 31, message: "Invalid" },
                   })}
                 />
-                {errors.day && (
-                  <p className="text-sm text-red-500">{errors.day.message}</p>
+                {errors.d && (
+                  <p className="text-sm text-red-500">{errors.d.message}</p>
                 )}
               </div>
               <div className="space-y-2">
@@ -151,15 +165,15 @@ export default function Setup() {
                   placeholder="MM"
                   type="number"
                   className="w-full border-indigo-300 focus:border-indigo-500 focus:ring-indigo-500"
-                  {...register("month", {
+                  {...register("mo", {
                     valueAsNumber: true,
                     required: "Required",
                     min: { value: 1, message: "Invalid" },
                     max: { value: 12, message: "Invalid" },
                   })}
                 />
-                {errors.month && (
-                  <p className="text-sm text-red-500">{errors.month.message}</p>
+                {errors.mo && (
+                  <p className="text-sm text-red-500">{errors.mo.message}</p>
                 )}
               </div>
               <div className="space-y-2">
@@ -174,7 +188,7 @@ export default function Setup() {
                   placeholder="YYYY"
                   type="number"
                   className="w-full border-indigo-300 focus:border-indigo-500 focus:ring-indigo-500"
-                  {...register("year", {
+                  {...register("y", {
                     valueAsNumber: true,
                     required: "Required",
                     min: {
@@ -183,8 +197,8 @@ export default function Setup() {
                     },
                   })}
                 />
-                {errors.year && (
-                  <p className="text-sm text-red-500">{errors.year.message}</p>
+                {errors.y && (
+                  <p className="text-sm text-red-500">{errors.y.message}</p>
                 )}
               </div>
             </div>
@@ -202,14 +216,14 @@ export default function Setup() {
                   type="number"
                   className="w-full border-indigo-300 focus:border-indigo-500 focus:ring-indigo-500"
                   defaultValue={0}
-                  {...register("hour", {
+                  {...register("h", {
                     valueAsNumber: true,
                     min: { value: 0, message: "Invalid" },
                     max: { value: 23, message: "Invalid" },
                   })}
                 />
-                {errors.hour && (
-                  <p className="text-sm text-red-500">{errors.hour.message}</p>
+                {errors.h && (
+                  <p className="text-sm text-red-500">{errors.h.message}</p>
                 )}
               </div>
               <div className="space-y-2">
@@ -225,16 +239,14 @@ export default function Setup() {
                   type="number"
                   className="w-full border-indigo-300 focus:border-indigo-500 focus:ring-indigo-500"
                   defaultValue={0}
-                  {...register("minute", {
+                  {...register("m", {
                     valueAsNumber: true,
                     min: { value: 0, message: "Invalid" },
                     max: { value: 59, message: "Invalid" },
                   })}
                 />
-                {errors.minute && (
-                  <p className="text-sm text-red-500">
-                    {errors.minute.message}
-                  </p>
+                {errors.m && (
+                  <p className="text-sm text-red-500">{errors.m.message}</p>
                 )}
               </div>
               <div className="space-y-2">
@@ -250,19 +262,81 @@ export default function Setup() {
                   type="number"
                   className="w-full border-indigo-300 focus:border-indigo-500 focus:ring-indigo-500"
                   defaultValue={0}
-                  {...register("second", {
+                  {...register("s", {
                     valueAsNumber: true,
                     min: { value: 0, message: "Invalid" },
                     max: { value: 59, message: "Invalid" },
                   })}
                 />
-                {errors.second && (
-                  <p className="text-sm text-red-500">
-                    {errors.second.message}
-                  </p>
+                {errors.s && (
+                  <p className="text-sm text-red-500">{errors.s.message}</p>
                 )}
               </div>
             </div>
+            <div className="space-y-2">
+              <Label
+                htmlFor="emojis"
+                className="text-sm font-medium text-indigo-600"
+              >
+                <SmileIcon className="w-4 h-4 inline-block mr-2" />
+                Floating Emojis (1-2)
+              </Label>
+              <Input
+                id="emojis"
+                placeholder="Enter 1-2 emojis (e.g., 🎉🎊)"
+                className="w-full border-indigo-300 focus:border-indigo-500 focus:ring-indigo-500"
+                {...register("e", {
+                  required: "Emojis are required",
+                  validate: (value) => {
+                    const emojiRegex = /^(?:[\p{Emoji}]{1,2})$/u;
+                    return emojiRegex.test(value) || "Enter 1-2 valid emojis";
+                  },
+                })}
+              />
+              {errors.e && (
+                <p className="text-sm text-red-500">{errors.e.message}</p>
+              )}
+            </div>
+            <Controller
+              name="b"
+              control={control}
+              defaultValue={"0"}
+              render={({ field }) => (
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="gradient"
+                    className="text-sm font-medium text-indigo-600"
+                  >
+                    <PaletteIcon className="w-4 h-4 inline-block mr-2" />
+                    Background Gradient
+                  </Label>
+                  <RadioGroup
+                    onValueChange={(value) => field.onChange(value)}
+                    className="grid grid-cols-3 gap-4"
+                    {...field}
+                  >
+                    {gradientOptions.map((option, index) => (
+                      <div key={option.value}>
+                        <RadioGroupItem
+                          value={index.toString()}
+                          id={option.value}
+                          className="peer sr-only"
+                        />
+                        <Label
+                          htmlFor={option.value}
+                          className={`flex flex-col items-center justify-center rounded-md border-2 border-muted bg-gradient-to-r ${option.value} p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary w-full h-24 text-center text-sm overflow-hidden`}
+                        >
+                          <span className="line-clamp-2">{option.label}</span>
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                  {errors.b && (
+                    <p className="text-sm text-red-500">{errors.b.message}</p>
+                  )}
+                </div>
+              )}
+            />
           </CardContent>
           <CardFooter>
             <Button
